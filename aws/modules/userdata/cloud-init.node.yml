@@ -1,0 +1,21 @@
+#cloud-config
+
+merge_how:
+  - name: list
+    settings: [append]
+  - name: dict
+    settings: [no_replace, recurse_list]
+
+runcmd:
+  # Install Node.js v12
+  - curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+  - sudo apt-get install -y nodejs
+
+  # Install PM2 at startup
+  - sudo npm i -g pm2
+  - pm2 startup systemd -u ${user} --hp /home/${user}
+  - sudo -H -u ${user} pm2 install pm2-logrotate
+  - sudo -H -u ${user} pm2 set pm2-logrotate:compress true
+  - sudo -H -u ${user} pm2 save
+
+final_message: "The system is finally up, after $UPTIME seconds."

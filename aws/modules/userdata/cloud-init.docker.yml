@@ -1,0 +1,25 @@
+#cloud-config
+
+merge_how:
+  - name: list
+    settings: [append]
+  - name: dict
+    settings: [no_replace, recurse_list]
+
+packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg-agent
+  - software-properties-common
+
+runcmd:
+  # Install Docker
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - apt update
+  - apt install -y docker-ce docker-ce-cli containerd.io
+  - usermod -aG docker ubuntu
+  - usermod -aG docker ${user}
+
+final_message: "The system is finally up, after $UPTIME seconds."

@@ -1,0 +1,41 @@
+#cloud-config
+
+merge_how:
+  - name: list
+    settings: [append]
+  - name: dict
+    settings: [no_replace, recurse_list]
+
+packages:
+  - php7.2-fpm
+  - php7.2-common
+  - php7.2-mysql
+  - php7.2-xml
+  - php7.2-zip
+  - php7.2-curl
+  - php7.2-bz2
+  - php7.2-cgi
+  - php7.2-gd
+  - php7.2-intl
+  - php7.2-json
+  - php7.2-mbstring
+  - php7.2-opcache
+  - php7.2-readline
+  - ffmpeg
+
+runcmd:
+  # Install composer
+  - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  - sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  - php -r "unlink('composer-setup.php');"
+
+  # Update php.ini
+  - sed -i '/^upload_max_filesize /s/=.*$/= 400M/' /etc/php/7.2/fpm/php.ini
+  - sed -i '/^post_max_size /s/=.*$/= 400M/' /etc/php/7.2/fpm/php.ini
+  - sed -i '/^memory_limit /s/=.*$/= 512M/' /etc/php/7.2/fpm/php.ini
+  - sed -i '/^max_execution_time /s/=.*$/= 600/' /etc/php/7.2/fpm/php.ini
+
+  # Start services
+  - systemctl restart php7.2-fpm
+
+final_message: "The system is finally up, after $UPTIME seconds."

@@ -1,0 +1,22 @@
+#cloud-config
+
+merge_how:
+  - name: list
+    settings: [append]
+  - name: dict
+    settings: [no_replace, recurse_list]
+
+packages:
+  - git
+  - awscli
+
+runcmd:
+  # Init SSH keys
+  - ssh-keyscan bitbucket.org >> /home/${user}/.ssh/known_hosts
+  - ssh-keyscan gitlab.com >> /home/${user}/.ssh/known_hosts
+  - aws ssm get-parameter --name "${ssm_prefix_key}/ssh_private_key" --region ${ssm_region} --with-decryption --query Parameter.Value --output text > /home/${user}/.ssh/id_rsa
+  - aws ssm get-parameter --name "${ssm_prefix_key}/ssh_public_key" --region ${ssm_region} --query Parameter.Value --output text > /home/${user}/.ssh/id_rsa.pub
+  - chmod 600 /home/${user}/.ssh/id_rsa
+  - chown ${user}:${user} -R /home/${user}/.ssh/*
+
+final_message: "The system is finally up, after $UPTIME seconds."

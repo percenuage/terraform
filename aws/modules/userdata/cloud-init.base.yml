@@ -1,0 +1,31 @@
+#cloud-config
+
+merge_how:
+  - name: list
+    settings: [append]
+  - name: dict
+    settings: [no_replace, recurse_list]
+
+hostname: ${hostname}
+
+apt_update: true
+apt_upgrade: true
+
+packages:
+  - ec2-instance-connect
+
+users:
+  - default
+  - name: ${user}
+    shell: /bin/bash
+    ssh_redirect_user: true
+
+runcmd:
+  # Add timestamp in history
+  - timedatectl set-timezone Europe/Paris
+  - echo 'HISTTIMEFORMAT="%F %T "' >> /etc/environment
+
+  # Enable color prompt in all users
+  - find /home /root -type f -name ".bashrc" -exec sed -i -e "/^#force_color_prompt/ cforce_color_prompt=yes" {} \;
+
+final_message: "The system is finally up, after $UPTIME seconds."
