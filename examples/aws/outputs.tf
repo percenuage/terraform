@@ -10,7 +10,7 @@ output "ses_domains" {
   value = module.ses.aws_ses_domain_identity
 }
 
-output "s3_percenuage_design" {
-  value = module.s3_percenuage_design.this_s3_bucket_bucket_domain_name
+output "s3_percenuage" {
+  value = module.s3_percenuage.this_s3_bucket_bucket_domain_name
 }
 
