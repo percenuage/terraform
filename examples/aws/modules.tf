@@ -1,5 +1,5 @@
 module "vpc" {
-  source = "../../modules/vpc"
+  source = "..\/..\/modules\/vpc"
 
   index = 0
   env = var.env
@@ -8,7 +8,7 @@ module "vpc" {
 }
 
 module "acm" {
-  source = "../../modules/acm"
+  source = "..\/..\/modules\/acm"
 
   domains = [
     "percenuage.fr",
@@ -17,7 +17,7 @@ module "acm" {
 }
 
 module "ses" {
-  source = "../../modules/ses"
+  source = "..\/..\/modules\/ses"
   providers = {
     aws = aws.ses
   }
